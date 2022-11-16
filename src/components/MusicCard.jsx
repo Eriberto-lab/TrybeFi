@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 export default class MusicCard extends Component {
   render() {
     const { trackName,
-      bandName, image, previewUrl, trackId, handleChange, checked } = this.props;
+      bandName,
+      image,
+      previewUrl, trackId, handleChange, checked } = this.props;
 
     return (
       <div>
