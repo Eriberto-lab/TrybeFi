@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import getMusics from '../services/musicsAPI';
+import { addSong, removeSong } from '../services/favoriteSongsAPI';
+import Loading from '../components/Loading';
 
 class Album extends React.Component {
   state = {
@@ -10,6 +12,8 @@ class Album extends React.Component {
     bandName: '',
     arrayOfMusic: [],
     image: '',
+    checked: {},
+    loading: false,
   };
 
   componentDidMount() {
@@ -28,8 +32,35 @@ class Album extends React.Component {
       image: arrayOfAlbum[0].artworkUrl100 });
   };
 
+  handleChange = async ({ target }) => {
+    const { arrayOfMusic } = this.state;
+    const { name, id, checked } = target;
+    const allMusics = arrayOfMusic.slice(1);
+
+    const findMusic = allMusics.find((element) => {
+      const { trackId } = element;
+      return trackId === id;
+    });
+
+    this.setState((prevState) => ({
+      checked: { ...prevState.checked, [name]: checked },
+    }));
+
+    if (checked) {
+      this.setState({ loading: true }, async () => {
+        await addSong(findMusic);
+        this.setState({ loading: false });
+      });
+    } else {
+      this.setState({ loading: true }, async () => {
+        await removeSong(findMusic);
+        this.setState({ loading: false });
+      });
+    }
+  };
+
   render() {
-    const { artistName, bandName, arrayOfMusic, image } = this.state;
+    const { artistName, bandName, arrayOfMusic, image, loading, checked } = this.state;
     const filteredArray = arrayOfMusic.slice(1);
     return (
       <>
@@ -39,7 +70,7 @@ class Album extends React.Component {
           {artistName}
         </h2>
         <p data-testid="album-name">{bandName}</p>
-        { filteredArray.map(
+        {loading ? <Loading /> : filteredArray.map(
           (element) => {
             const { trackId, previewUrl, trackName } = element;
             return ((<MusicCard
@@ -49,9 +80,13 @@ class Album extends React.Component {
               trackId={ trackId }
               image={ image }
               album={ bandName }
+              checked={ checked[trackName] }
+              handleChange={ this.handleChange }
+
             />));
           },
         )}
+
       </>
 
     );
