@@ -67,6 +67,7 @@ class Search extends React.Component {
                 id=""
                 onChange={ this.handleChange }
                 value={ artist }
+                placeholder="Digite o nome do artista"
               />
               <button
                 data-testid="search-artist-button"
