@@ -16,3 +16,5 @@
 * Utilizar o Switch do React Router;
 
 * Criar links de navegação na aplicação com o componente Link;
+
+### ps: Novas funcionalidades e CSS em construção. :construction:
